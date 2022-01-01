@@ -13,8 +13,22 @@ function filterDataByName(query) {
 }
 
 // Get the CIK, company name, ticker, and exchange from json
-function getNameData(query) {
+function getDataByName(query) {
   const res = companies.data.filter((el) => el[1] === query);
+
+  // if no exact match, return null
+  if (res.length < 1) return null;
+
+  return {
+    name: res[0][1],
+    ticker: res[0][2],
+    cik: String(res[0][0]).padStart(10, '0'), // must be 10 digit string
+    exchange: res[0][3],
+  };
+}
+
+function getDataByCIK(query) {
+  const res = companies.data.filter((el) => el[0] === query);
 
   // if no exact match, return null
   if (res.length < 1) return null;
@@ -32,4 +46,4 @@ function getNumberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export { filterDataByName, getNameData, getNumberWithCommas };
+export { filterDataByName, getDataByName, getDataByCIK, getNumberWithCommas };

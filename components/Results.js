@@ -25,7 +25,6 @@ export default function Results({ query }) {
       .get(`https://data.sec.gov/api/xbrl/companyfacts/CIK${query}.json`)
       .then((res) => {
         setState({ status: 'resolved', data: res.data });
-        console.log(res.data);
       })
       .catch((err) => {
         setState({ status: 'rejected', error: err.message });

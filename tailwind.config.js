@@ -12,7 +12,11 @@ module.exports = {
         xl: theme('spacing.8'),
       },
     }),
-    extend: {},
+    extend: {
+      backgroundImage: {
+        'hero-pattern': 'url(/assets/hero-pattern.svg)',
+      },
+    },
   },
   plugins: [],
 };
