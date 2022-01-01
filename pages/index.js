@@ -3,26 +3,36 @@ import { useRouter } from 'next/router';
 import React from 'react';
 import Footer from '../components/Footer';
 import Filter from '../components/Filter';
-import { getDataByName, getDataByCIK } from '../utils/helpers';
+import QueryResults from '../components/QueryResults';
+import { filterDataByName, getFormattedCIK } from '../utils/helpers';
 import Header from '../components/Header';
-import data from '../data/company_tickers.json';
 
 export default function Home() {
   const router = useRouter();
-  const [cik, setCik] = React.useState('');
   const [query, setQuery] = React.useState('');
-  const [data, setData] = React.useState(null);
 
-  React.useEffect(() => {
-    setCik('');
-    setData(null);
-    let res = getDataByName(query);
+  // derived state
+  const queryResults = filterDataByName(query);
+  const data = getCompanyIfExists(queryResults);
+  const cik = getCompanyCIK(data);
 
-    if (res) {
-      setData(res);
-      setCik(res.cik);
-    }
-  }, [query]);
+  // check if company is only match
+  function getCompanyIfExists(query) {
+    if (!query) return null;
+    if (query.length === 1) return query[0];
+    return null;
+  }
+
+  // get company's CIK from
+  function getCompanyCIK(data) {
+    if (!data) return null;
+    return getFormattedCIK(data[0]);
+  }
+
+  // EVENT HANDLERS
+  const handleQuery = (e) => {
+    setQuery(e.target.value);
+  };
 
   const handleKeyPress = (e) => {
     if (e.key === 'Enter') {
@@ -56,18 +66,13 @@ export default function Home() {
         <h1 className="text-7xl font-black text-gray-100 text-center pt-5">
           What do they pay in taxes?
         </h1>
-        <div className="lg:w-3/5 md:w-4/5 sm:w-full mx-auto">
+        <div className="xl:w-3/5 lg:w-4/5 sm:w-full mx-auto">
           <Filter
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={handleQuery}
             handleKeyPress={handleKeyPress}
           />
-          <div className="my-4">
-            <h2 className="text-2xl font-bold text-gray-300">
-              {data ? 'Found' : 'No match found'}
-            </h2>
-            <p className="text-gray-400">{data ? 'CIK: #' + cik : null}</p>
-          </div>
+          <QueryResults results={queryResults} />
         </div>
       </main>
 

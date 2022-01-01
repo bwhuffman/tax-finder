@@ -1,15 +1,25 @@
 import companies from '../data/company_tickers.json';
 
-// return array of
+// return array of filtered search items
 function filterDataByName(query) {
-  const filteredQuery = companies.data.filter(
-    (item) =>
-      item[1].toLowerCase().includes(query.toLowerCase()) ||
-      item[2].toLowerCase().includes(query.toLowerCase()),
-  );
+  // return if falsy
+  if (!query) return;
+  let lcQuery = query.toLowerCase();
 
-  console.log(filteredQuery);
+  // run search query
+  const filteredQuery = companies.data.filter((el) => {
+    let [cik, name, ticker, exchange] = el;
+    if (name && name.toLowerCase().includes(lcQuery)) return true;
+    if (ticker && ticker.toLowerCase().includes(lcQuery)) return true;
+    if (exchange && exchange.toLowerCase().includes(lcQuery)) return true;
+    if (cik && cik.toString().toLowerCase().includes(lcQuery)) return true;
+    return false;
+  });
   return filteredQuery;
+}
+
+function getFormattedCIK(cik) {
+  return String(cik).padStart(10, '0');
 }
 
 // Get the CIK, company name, ticker, and exchange from json
@@ -46,4 +56,10 @@ function getNumberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
-export { filterDataByName, getDataByName, getDataByCIK, getNumberWithCommas };
+export {
+  filterDataByName,
+  getDataByName,
+  getDataByCIK,
+  getNumberWithCommas,
+  getFormattedCIK,
+};
